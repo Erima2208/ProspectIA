@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#4f46e5">
+  <title>ProspectIA — Prospection B2B (résultats réels)</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <div class="brand">
+      <div class="logo"><span>🤖</span></div>
+      <div>
+        <div class="name">Prospect<b>IA</b> <span class="pill ok">Résultats réels · WhatsApp</span></div>
+        <p class="tag">Prospection & qualification industrielle — sources web vérifiables</p>
+      </div>
+    </div>
+    <div class="tools">
+      <span id="engine" class="pill"><i class="dot"></i><span>…</span></span>
+      <button class="tb" id="btnHistory">🕘 <span class="hide-sm">Historique</span> <em id="histCount">0</em></button>
+      <button class="tb" id="btnSig">✍️ <span class="hide-sm">Signature</span></button>
+      <button class="tb blue" id="btnDocx">📄 Export .DOCX</button>
+      <button class="tb" id="btnCsv">⬇️ <span class="hide-sm">CSV</span></button>
+      <label class="tb">⬆️ <span class="hide-sm">Importer</span><input type="file" id="importFile" accept=".csv" hidden></label>
+      <button class="tb" id="btnSettings" title="Paramètres">⚙️</button>
+      <button class="tb danger-h" id="btnReset" title="Tout réinitialiser">↺</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="dash">
+    <div class="cards" id="statCards"></div>
+    <div class="box" id="pipeline"></div>
+  </section>
+
+  <section class="grid">
+    <aside class="box scan">
+      <h2>🔎 Scanner le web <small>résultats réels</small></h2>
+      <p class="muted">Chaque résultat provient d'une vraie recherche Google ; les contacts affichés sont ceux réellement trouvés sur les sites. Rien n'est inventé.</p>
+
+      <label class="lbl">Cibles & secteurs préréglés</label>
+      <div class="chips" id="presets"></div>
+
+      <label class="lbl" for="keywords">Mots-clés (séparés par des virgules)</label>
+      <textarea id="keywords" rows="3" placeholder="ex : forage hydraulique, pompage solaire, château d'eau"></textarea>
+
+      <label class="lbl" for="zone">Zone géographique</label>
+      <input id="zone" value="Abidjan, Côte d'Ivoire">
+      <div class="chips small" id="zones"></div>
+
+      <label class="lbl">Résultats par mot-clé</label>
+      <div class="seg" id="volume">
+        <button data-v="3">3 · Rapide</button><button data-v="6" class="on">6 · Conseillé</button><button data-v="10">10 · Maximum</button>
+      </div>
+
+      <label class="check"><input type="checkbox" id="deep" checked>
+        <span><b>Audit approfondi</b> — visite chaque site (accueil + contact) pour extraire emails, mobiles, WhatsApp, réseaux<br><small>Nécessite le backend local</small></span></label>
+
+      <button class="btn-main" id="btnScan">🚀 Lancer le scan</button>
+      <button class="btn-sec" id="btnNext">↻ Résultats suivants (même recherche)</button>
+      <div id="progress" class="progress hidden"></div>
+    </aside>
+
+    <section class="box list">
+      <div class="list-head">
+        <h2>📋 Prospects <em id="countBadge">0</em></h2>
+        <div class="row">
+          <button class="mini" id="btnAdd">＋ Ajouter</button>
+          <button class="mini" id="btnDocxSel">📄 Rapport .DOCX</button>
+          <button class="mini green" id="btnBulk" disabled>📨 Envoi groupé (0)</button>
+          <button class="mini danger" id="btnClear">🗑 Vider</button>
+        </div>
+      </div>
+      <div class="filters">
+        <input id="fText" placeholder="🔎 Filtrer nom, site, contact…">
+        <select id="fType"><option value="">Tous types</option><option value="entreprise">Entreprises</option><option value="particulier">Particuliers (manuels)</option></select>
+        <select id="fStatus"><option value="">Tous statuts</option></select>
+        <select id="fChannel"><option value="">Tous canaux</option><option value="wa">WhatsApp direct</option><option value="mail">Email uniquement</option><option value="tel">Téléphone renseigné</option></select>
+        <select id="fSort"><option value="score">Score ↓</option><option value="name">Nom A→Z</option><option value="recent">Plus récents</option></select>
+      </div>
+      <label class="check inline"><input type="checkbox" id="selAll"><span>Tout sélectionner (résultats affichés)</span></label>
+      <div id="results" class="results"></div>
+    </section>
+  </section>
+</main>
+
+<footer class="foot">ProspectIA v3 — données collectées localement, stockées dans votre navigateur. Respectez les CGU des sites et la réglementation sur la prospection (RGPD / loi ivoirienne sur les données personnelles).</footer>
+
+<!-- Modales -->
+<div class="modal hidden" id="mSettings"><div class="mbox">
+  <h3>⚙️ Paramètres</h3>
+  <label class="lbl">Clé API Google Custom Search</label><input type="password" id="apiKey" autocomplete="off">
+  <label class="lbl">ID moteur (CX)</label><input id="cxId" autocomplete="off">
+  <label class="lbl">URL du backend</label><input id="backendUrl" value="http://localhost:3001">
+  <p class="muted">Les clés restent dans ce navigateur. Quota gratuit Google : 100 requêtes/jour (1 requête = 1 mot-clé).</p>
+  <div class="mact"><button class="btn-main" data-save="settings">💾 Enregistrer</button><button data-close>Fermer</button></div>
+</div></div>
+
+<div class="modal hidden" id="mSig"><div class="mbox">
+  <h3>✍️ Signature & offre commerciale</h3>
+  <div class="two">
+    <div><label class="lbl">Nom</label><input id="sigName"></div><div><label class="lbl">Fonction</label><input id="sigTitle"></div>
+    <div><label class="lbl">Société</label><input id="sigCompany"></div><div><label class="lbl">Téléphone</label><input id="sigPhone"></div>
+    <div><label class="lbl">Email</label><input id="sigEmail"></div><div><label class="lbl">Site web</label><input id="sigSite"></div>
+  </div>
+  <label class="lbl">Votre offre (insérée dans les emails)</label><textarea id="offer" rows="6"></textarea>
+  <div class="mact"><button class="btn-main" data-save="sig">💾 Enregistrer</button><button data-close>Fermer</button></div>
+</div></div>
+
+<div class="modal hidden" id="mHist"><div class="mbox">
+  <h3>🕘 Historique des scans</h3>
+  <div id="histList" class="hist"></div>
+  <div class="mact"><button class="danger" id="btnHistClear">Vider l'historique</button><button data-close>Fermer</button></div>
+</div></div>
+
+<div class="modal hidden" id="mAdd"><div class="mbox">
+  <h3>＋ Ajouter un prospect</h3>
+  <div class="two">
+    <div><label class="lbl">Nom *</label><input id="aName"></div>
+    <div><label class="lbl">Type</label><select id="aType"><option value="entreprise">Entreprise</option><option value="particulier">Particulier</option></select></div>
+    <div><label class="lbl">Téléphone / mobile</label><input id="aPhone"></div><div><label class="lbl">Email</label><input id="aEmail"></div>
+    <div><label class="lbl">Site web</label><input id="aSite"></div><div><label class="lbl">Secteur / mot-clé</label><input id="aKw"></div>
+  </div>
+  <p class="muted">Les particuliers ne sont jamais recherchés automatiquement (données personnelles) : saisissez uniquement des contacts qui vous ont donné leur accord.</p>
+  <div class="mact"><button class="btn-main" id="btnAddOk">Ajouter</button><button data-close>Annuler</button></div>
+</div></div>
+
+<div class="modal hidden" id="mMail"><div class="mbox">
+  <h3 id="mailTitle">✉️ Email</h3>
+  <p class="muted" id="mailTo"></p>
+  <label class="lbl">Sujet</label><input id="mailSubject">
+  <label class="lbl">Message <small>· variables : {{entreprise}} {{secteur}}</small></label><textarea id="mailBody" rows="10"></textarea>
+  <label class="lbl hidden" id="delayWrap">Délai entre deux envois (secondes, min 5)<input type="number" id="mailDelay" value="20" min="5"></label>
+  <p class="muted">La signature enregistrée est ajoutée automatiquement.</p>
+  <div class="mact"><button class="btn-main" id="btnSend">📤 Envoyer</button><button id="btnMailCancel">Annuler</button></div>
+  <div id="mailStatus" class="progress hidden"></div>
+</div></div>
+
+<div id="toast" class="toast hidden"></div>
+<script src="phones.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
